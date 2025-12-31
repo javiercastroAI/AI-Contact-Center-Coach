@@ -1,212 +1,35 @@
-AI Contact Center Coach
+AI Contact Center Coach — Prototype / Research Only  
+Version 3.3 — December 2025  
+© 2025 Javier Castro (dnAI) — licensed under the MIT License (see LICENSE)
 
-Version 3.3 — December 2025
+This project is classified as **High-Risk** under Annex III §4(c) of the EU AI Act because it evaluates and monitors employees. Anyone who puts it into service becomes the **Provider** and must complete an AI Risk-Management System, obtain CE-marking, register the system in the EU database and maintain human oversight and post-market monitoring. Before processing voice or transcript data, the integrator must perform a GDPR-compliant Data-Protection Impact Assessment. Spanish labour rules (RDL 9/2021 and the Estatuto de los Trabajadores) require transparency about algorithms used for employee scoring and a way for agents to contest automated decisions. Operators covered by NIS2 must keep the supplied SBOM current, patch vulnerabilities promptly and report serious incidents within 72 hours. This repository is provided solely for demonstration and educational purposes. The author offers no warranty and accepts no liability for any live deployment.
 
-Developed by Javier Castro (dnAI)
+**Before any production use** the integrator must:  
+• finish the full AI RMS and Annex XI technical file,  
+• clear a DPIA with the organisation’s DPO or legal team,  
+• secure lawful grounds and contracts for storing or analysing customer calls,  
+• run bias and robustness audits on their own datasets,  
+• implement a secure MLOps pipeline with static-analysis scanning, SBOM management and continuous patching.  
+dnAI can assist professionally with these steps.
 
-An AI-powered coaching and quality assurance system for contact centers, combining semantic script adherence, operational promise verification, and GPT-driven qualitative feedback.
+**Overview.** AI Contact Center Coach evaluates, coaches and improves contact-centre interactions by combining semantic golden-script adherence scoring, automatic conversation segmentation, resolution-promise extraction and fulfilment validation, GPT-powered qualitative coaching feedback and visual highlighting of unfulfilled promises. Traditional QA asks whether agents uttered the correct words; this system checks whether they said the right thing, promised the right action and actually delivered it, directly affecting CSAT, first-call resolution, churn and trust.
 
-⸻
+**Core objectives.** Measure what agents say, detect what they promise, verify fulfilment, highlight high-impact risk areas and provide actionable AI-generated coaching guidance.
 
-🚀 Overview
+**Key capabilities.** Automatic call segmentation into phases without manual tagging; semantic adherence scoring with SentenceTransformers embeddings, cosine similarity and section-plus-overall explanations; detection, validation and flagging of resolution promises; benchmarked and explainable scoring against 75th-percentile targets; GPT-4 coaching feedback covering sentiment, strengths, weaknesses and suggested golden phrases.
 
-AI Contact Center Coach is an advanced AI system designed to evaluate, coach, and improve contact-center interactions by combining:
-	•	Semantic golden-script adherence scoring
-	•	Automatic conversation segmentation
-	•	Operational promise detection and validation
-	•	AI-generated coaching feedback
-	•	Visual highlighting of unfulfilled resolution promises
+**Architecture flow.** Diarised transcript → heuristic segmentation → agent-utterance extraction → (a) golden-script embedding comparison for adherence scores and (b) promise extraction and back-end validation → GPT-4 coaching and feedback.
 
-Unlike traditional QA tools that rely on rigid keyword rules or manual reviews, this system applies modern NLP, embeddings, and LLM reasoning to deliver objective, explainable, and actionable coaching insights.
+**Tech stack.** Python, NumPy, regex-based NLP, SentenceTransformers (all-MiniLM-L6-v2), OpenAI GPT-4 API, IPython / Markdown reporting.
 
-⸻
+**Setup.** Clone the repository, install dependencies from requirements.txt, set `OPENAI_API_KEY` in a `.env` file, run `ai_contact_center_coach.py`. The script outputs section-level adherence, highlights unfulfilled promises and generates a full coaching report.
 
-🎯 Core Objectives
-	•	Measure what agents say (semantic script adherence)
-	•	Detect what agents promise (tickets, emails, follow-ups, actions)
-	•	Verify whether promises are fulfilled
-	•	Highlight risk areas that directly impact CSAT
-	•	Provide AI-generated coaching guidance, not just scores
+**Outputs.** Semantic similarity tables per section, weighted overall adherence score, promise audit (fulfilled vs pending) and AI coaching recommendations with golden phrases.
 
-⸻
+**Security.** A signed CycloneDX SBOM (`sbom-cyclonedx.json`, SHA-256, dated 13 Dec 2025) is included. See SECURITY.md for the responsible-disclosure policy (response target ≤ 30 days).
 
-🧠 Key Capabilities
+**License reminder.** Distributed under the MIT License. The software is provided **“AS IS”**, without warranty of any kind. You accept full responsibility for any deployment or derivative work.
 
-1. Automatic Call Segmentation
+**Author.** Javier Castro — founder of dnAI, CEO-turned-AI architect, specialist in AI-driven transformation, contact-centre analytics and operational intelligence. “Quality is not what you say — it’s what you promise and actually deliver.”
 
-Heuristically segments diarised transcripts into standard contact-center phases:
-	•	Greeting
-	•	Issue Identification
-	•	Troubleshooting
-	•	Solution Delivery
-	•	Resolution / Ticket Creation
-	•	Upsell (AIDA)
-	•	Closing
-
-No manual tagging required.
-
-⸻
-
-2. Golden Script Adherence (Semantic, Not Keyword-Based)
-	•	Uses Sentence Transformers embeddings
-	•	Computes cosine similarity against multiple golden-script variants
-	•	Supports dynamic placeholders (e.g. [agent name])
-	•	Produces:
-	•	Section-level adherence scores
-	•	Best-match explanations
-	•	Overall weighted adherence
-
-⸻
-
-3. Resolution Promise Extraction & Verification ⭐
-
-One of the defining features of v3.3.
-
-The system detects explicit and implicit promises, such as:
-	•	Opening / logging a support ticket
-	•	Sending confirmation or follow-up emails
-	•	Escalating or tracking an issue
-	•	Notifying the customer
-	•	Checking systems or logs
-
-Each promise is:
-	1.	Extracted via enriched regex + NLP
-	2.	Validated via simulated (or real) backend checks
-	3.	Flagged visually if unfulfilled
-
-⚠️ Unfulfilled promises are highlighted prominently — this is where CSAT leakage happens.
-
-⸻
-
-4. Benchmarked, Explainable Scoring
-	•	Per-section benchmarks (75th percentile defaults)
-	•	Weighted overall adherence
-	•	Clear deltas vs target
-	•	Human-readable explanations for every score
-
-⸻
-
-5. GPT-Powered Coaching Feedback
-
-The system calls GPT-4 to generate structured coaching feedback, including:
-	•	Customer sentiment evolution (start → middle → end)
-	•	Strengths in communication and operations
-	•	Weak points by section
-	•	Explicit guidance on:
-	•	What to say
-	•	Which golden phrases to use
-	•	How to confirm and log operational actions
-
-This turns raw analytics into coachable insight.
-
-⸻
-
-🧩 Architecture Overview
-
-Diarised Transcript
-        │
-        ▼
-Heuristic Segmentation
-        │
-        ▼
-Agent Utterance Extraction
-        │
-        ├──▶ Golden Script Embeddings (SentenceTransformers)
-        │        │
-        │        └──▶ Section & Overall Adherence Scores
-        │
-        ├──▶ Resolution Promise Extraction
-        │        │
-        │        └──▶ Action Validation (API / Logs / CRM)
-        │
-        ▼
-GPT-4 Coaching & Feedback
-
-
-⸻
-
-🛠️ Tech Stack
-	•	Python
-	•	SentenceTransformers (all-MiniLM-L6-v2)
-	•	OpenAI API (GPT-4)
-	•	NumPy
-	•	Regex-based NLP
-	•	IPython / Markdown rendering
-
-⸻
-
-⚙️ Setup & Installation
-
-1. Clone the repository
-
-git clone https://github.com/your-org/ai-contact-center-coach.git
-cd ai-contact-center-coach
-
-2. Install dependencies
-
-pip install -r requirements.txt
-
-3. Configure environment variables
-
-Create a .env file:
-
-OPENAI_API_KEY=your_openai_api_key_here
-
-
-⸻
-
-▶️ Running the System
-
-python ai_contact_center_coach.py
-
-The execution will:
-	•	Display section-level adherence results
-	•	Highlight unfulfilled promises
-	•	Generate a full coaching report
-	•	Produce AI-powered qualitative feedback
-
-⸻
-
-📊 Output Examples
-	•	Section adherence with semantic similarity
-	•	Weighted overall adherence score
-	•	Resolution promise audit (validated vs pending)
-	•	AI coaching recommendations with golden-script examples
-
-⸻
-
-🧠 Why This Matters
-
-Most QA systems answer:
-
-“Did the agent say the right words?”
-
-This system answers:
-
-“Did the agent say the right thing, promise the right action, and actually deliver it?”
-
-That difference directly impacts:
-	•	CSAT
-	•	First Call Resolution
-	•	Churn
-	•	Trust
-
-⸻
-
-🔮 Roadmap Ideas
-	•	Real CRM / ticketing system integrations
-	•	Real-time agent assist
-	•	Reinforcement learning for script optimization
-	•	Multilingual support
-	•	ISO / AI Act–aligned governance logging
-
-⸻
-
-👤 Author
-
-Javier Castro
-Founder of dnAI
-CEO-turned-AI Architect
-Specialist in AI-driven transformation contact centers, CX analytics, and operational intelligence
-
-“Quality is not what you say — it’s what you promise and actually deliver.”
+Road-map ideas: live CRM / ticketing integrations, real-time agent assist, reinforcement learning for script optimisation, multilingual support, ISO- and AI-Act-aligned governance logging.
