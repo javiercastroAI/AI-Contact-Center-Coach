@@ -26,7 +26,7 @@ dnAI can assist professionally with these steps.
 
 **Outputs.** Semantic similarity tables per section, weighted overall adherence score, promise audit (fulfilled vs pending) and AI coaching recommendations with golden phrases.
 
-**Security.** A signed CycloneDX SBOM (`sbom-cyclonedx.json`, SHA-256, dated 13 Dec 2025) is included. See `.github/SECURITY.md` for the responsible-disclosure policy (response target ≤ 30 days) and embedded public PGP key.
+**Security.** A signed CycloneDX SBOM (`sbom-cyclonedx.json`, SHA-256, dated 13 Dec 2025) is included. See [`.github/SECURITY.md`](.github/SECURITY.md) for the responsible-disclosure policy (response target ≤ 30 days) and embedded public PGP key.
 
 **License reminder.** Distributed under the MIT License. The software is provided **“AS IS”**, without warranty of any kind. You accept full responsibility for any deployment or derivative work.
 
