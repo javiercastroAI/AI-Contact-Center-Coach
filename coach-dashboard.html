@@ -702,5 +702,88 @@
         requestAnimationFrame(tick);
       });
     </script>
+    <script>
+      // Dynamically hydrate dashboard if dashboard_data.json is present
+      fetch("dashboard_data.json")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (!data) return;
+          const metrics = data.metrics || {};
+          const setText = (selector, text) => {
+            const el = document.querySelector(selector);
+            if (el) el.textContent = text;
+          };
+
+          if (metrics.overall_adherence !== undefined) {
+            setText(".metrics .metric:nth-child(1) .value", `${metrics.overall_adherence.toFixed(1)}%`);
+            setText(".metrics .metric:nth-child(1) .delta", `${(metrics.overall_delta || 0).toFixed(1)} vs benchmark`);
+            const gauge = document.querySelector(".gauge");
+            if (gauge) gauge.style.setProperty("--value", metrics.overall_adherence.toFixed(0));
+          }
+          if (metrics.csat !== undefined && metrics.csat !== null) {
+            setText(".metrics .metric:nth-child(2) .value", `${metrics.csat.toFixed(1)} / 10`);
+            setText(".metrics .metric:nth-child(2) .delta", `${(metrics.csat_delta || 0).toFixed(1)} vs benchmark`);
+          }
+          if (metrics.resolution_integrity !== undefined) {
+            setText(".metrics .metric:nth-child(3) .value", `${metrics.resolution_integrity.toFixed(1)}%`);
+            setText(".metrics .metric:nth-child(3) .delta", `${metrics.pending_promises || 0} pending`);
+          }
+          if (metrics.sentiment_summary) {
+            setText(".callout", metrics.sentiment_summary);
+          }
+
+          // Section adherence bars
+          const sectionScores = data.section_scores || {};
+          document.querySelectorAll(".bars .bar-row").forEach((row) => {
+            const labelEl = row.querySelector("div");
+            const bar = row.querySelector(".bar-fill");
+            const scoreEl = row.querySelector(".score");
+            if (!labelEl || !bar || !scoreEl) return;
+            const name = labelEl.textContent.trim();
+            if (sectionScores[name] !== undefined) {
+              const val = sectionScores[name];
+              bar.dataset.score = val.toFixed(1);
+              bar.style.width = `${val}%`;
+              scoreEl.textContent = `${val.toFixed(1)}%`;
+            }
+          });
+
+          // Resolution promises
+          const promises = data.resolution_promises || [];
+          const list = document.querySelector(".status-list");
+          if (list && promises.length) {
+            list.innerHTML = "";
+            promises.forEach((p) => {
+              const status = (p.status || "").toLowerCase();
+              const statusClass = status === "validated" ? "good" : status === "pending" ? "warn" : "bad";
+              const item = document.createElement("div");
+              item.className = "status-item";
+              item.innerHTML = `
+                <div>${p.title || ""}<span>${p.detail || ""}</span></div>
+                <div class="tag ${statusClass}">${p.status || ""}</div>
+              `;
+              list.appendChild(item);
+            });
+          }
+
+          // Coach notes
+          const notes = data.coach_notes || [];
+          const notesList = document.querySelector(".coach-notes");
+          if (notesList && notes.length) {
+            notesList.innerHTML = "";
+            notes.forEach((n) => {
+              const li = document.createElement("li");
+              li.textContent = n;
+              notesList.appendChild(li);
+            });
+          }
+
+          // Suggested phrase
+          if (data.suggested_phrase) {
+            setText(".callout", data.suggested_phrase);
+          }
+        })
+        .catch((err) => console.warn("dashboard_data.json not loaded", err));
+    </script>
   </body>
 </html>

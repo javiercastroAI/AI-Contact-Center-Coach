@@ -73,6 +73,14 @@ Research copy (identical API, extra traces):
 from contact_center_coach_research import analyze_transcript
 ```
 
+## Export notebook results to the static dashboard
+After you compute `results` in the notebook:
+```python
+from contact_center_coach import export_dashboard_json
+export_dashboard_json(results, csat_score=4.0, path="dashboard_data.json")
+```
+Then open `coach-dashboard.html` in your browser; it will load `dashboard_data.json` and hydrate the UI.
+
 ## Outputs you can expect
 - Section adherence vs benchmarks (color‑coded)
 - KPI summary (overall adherence, CSAT, resolution integrity, coverage gap, unique‑match efficiency, sentiment recovery, topic drift, escalation risk)

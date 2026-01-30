@@ -11,7 +11,7 @@ import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 import numpy as np
 import math
@@ -884,3 +884,51 @@ def resolution_integrity(resolution_results: List[ResolutionResult]) -> Tuple[fl
     validated = sum(1 for result in resolution_results if result.status == "validated")
     pending = sum(1 for result in resolution_results if result.status == "pending")
     return (validated / len(resolution_results)) * 100, pending
+
+
+def export_dashboard_json(
+    results: Dict,
+    csat_score: Optional[float] = None,
+    path: str = "dashboard_data.json",
+    benchmarks: Optional[Dict[str, float]] = None,
+) -> None:
+    """
+    Serialize key metrics for the static HTML dashboard (coach-dashboard.html).
+    Writes a compact JSON file that the dashboard JS can load and render.
+    """
+    benchmarks = benchmarks or BENCHMARKS
+    section_scores = results.get("section_scores", {})
+    integrity_score, pending_count = resolution_integrity(results.get("resolution_results", []))
+
+    payload = {
+        "metrics": {
+            "overall_adherence": results.get("overall_adherence", 0.0),
+            "overall_delta": results.get("overall_adherence", 0.0) - benchmarks.get("Overall", 0.0),
+            "csat": csat_score,
+            "csat_delta": (csat_score - benchmarks.get("CSAT", 0.0)) if csat_score is not None else None,
+            "resolution_integrity": integrity_score,
+            "pending_promises": pending_count,
+            "sentiment_summary": results.get("sentiment_kpis", {}).get("summary", ""),
+        },
+        "section_scores": section_scores,
+        "resolution_promises": [
+            {
+                "title": r.promise,
+                "detail": f"Turn {r.turn}" if r.turn is not None else "",
+                "status": r.status,
+            }
+            for r in results.get("resolution_results", [])
+        ],
+        "coach_notes": results.get("detailed_feedback", {})
+        .get("Overall", {})
+        .get("summary", "")
+        .split("\n"),
+        "suggested_phrase": results.get("detailed_feedback", {})
+        .get("Overall", {})
+        .get("summary", ""),
+        "sentiment_arc": results.get("sentiment_curve", []),
+        "flow_path": results.get("section_path", results.get("sections", {}).get("_path", [])),
+    }
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
