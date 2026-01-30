@@ -1,5 +1,6 @@
 # Purpose: research/education prototype only.
 # License: MIT (see LICENSE).
+# Author: Javier Castro (dnAI).
 # Security: report issues to javiercastro@aiready.es (see .github/SECURITY.md).
 
 from __future__ import annotations
