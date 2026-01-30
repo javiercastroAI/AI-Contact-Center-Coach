@@ -1,0 +1,10 @@
+# Editor workspace files
+macjcp.code-workspace
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Streamlit secrets (if ever used)
+.streamlit/secrets.toml
