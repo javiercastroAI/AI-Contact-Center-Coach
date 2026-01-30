@@ -4,6 +4,7 @@
 
 | Version | Supported |
 |---------|-----------|
+| 3.4     | ✅        |
 | 3.x     | ✅        |
 | < 3.0   | ❌        |
 
@@ -18,7 +19,7 @@ Please email **javiercastro@aiready.es** with:
 Please do not publicly disclose issues until we confirm a patch or 90 days have elapsed.
 
 This policy covers all repository artifacts, including the notebook, `contact_center_coach.py`,
-`streamlit_app.py`, and `coach-dashboard.html`.
+`contact_center_coach_research.py`, `streamlit_app.py`, and `coach-dashboard.html`.
 
 PGP key / fingerprint: DE02 A165 D6BD 04B2 8738  9487 AA0B 06EA A627 9FDF
 
