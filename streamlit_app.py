@@ -111,6 +111,7 @@ st.markdown(
 <div class="hero-card">
   <div class="hero-title">AI Contact Center Coach</div>
   <div class="hero-subtitle">A research prototype for script adherence, resolution integrity, and coaching insights.</div>
+  <div class="hero-subtitle">Developed by Javier Castro (dnAI)</div>
 </div>
 """,
     unsafe_allow_html=True,
